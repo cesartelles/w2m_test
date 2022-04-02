@@ -1,0 +1,8 @@
+Para contruir la app :
+
+docker-compose build
+docker-compose up
+
+Para acceder 
+
+http://localhost:8081

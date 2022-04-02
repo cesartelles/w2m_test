@@ -1,0 +1,51 @@
+<div class="bar">
+  <button mat-fab color="warn" title="Create Hero" (click)="openHeroDialog()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <div class="filter-bar">
+    <mat-form-field appearance="standard">
+      <input matInput placeholder="Filter by name" (keydown)="onKeydown($event)"
+      [(ngModel)]="nameFilter">
+    </mat-form-field>
+    <button mat-raised-button (click)="filterByName()">Search</button>
+  </div>
+</div>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" >
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> No. </th>
+      <td mat-cell *matCellDef="let hero"> {{hero.id}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let hero"> {{hero.name}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="alias">
+      <th mat-header-cell *matHeaderCellDef> Alias </th>
+      <td mat-cell *matCellDef="let hero"> {{hero.alias}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="shortBio">
+      <th mat-header-cell *matHeaderCellDef> Short Bio </th>
+      <td mat-cell *matCellDef="let hero"> {{hero.shortBio}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let hero" class="action-link">
+        <a> 
+          <mat-icon aria-hidden="false" (click)="openHeroDialog(hero)">edit</mat-icon>
+        </a> | 
+        <a>
+          <mat-icon aria-hidden="false" (click)="openDeleteDialog(hero)">delete</mat-icon>
+        </a>  
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator (page)="getPaginatorData($event)" [length]="total" 
+  [pageSize]="pageSize" showFirstLastButtons>
+  </mat-paginator>

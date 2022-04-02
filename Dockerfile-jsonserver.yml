@@ -1,0 +1,16 @@
+FROM node:14
+
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app
+
+COPY json-server .
+
+RUN npm install -g json-server
+
+EXPOSE 3000
+
+#CMD ["npm","run","dev"]
+#CMD ["bash", "./start"]
+
+ENTRYPOINT [ "sh", "./start.sh" ]

@@ -1,0 +1,73 @@
+<h2 *ngIf="hero.id else isNotNew">Modify Hero</h2>
+<ng-template #isNotNew><h2>Create Hero</h2></ng-template>
+<mat-divider></mat-divider>
+<form [formGroup]="heroForm" (ngSubmit)="onSubmit()">
+  <div class="contenedor">
+    <mat-form-field>
+      <input matInput type="text" placeholder="Name" formControlName="name"
+      autocomplete="Off" uppercase>
+      <!--<mat-error *ngIf="!heroForm?.get('name')?.valid">gfg
+        {{ getErrorMessage('name') }}
+      </mat-error>--> 
+      <mat-error *ngIf="!name?.valid && name!.errors?.['required']">
+        Name is required.
+      </mat-error>
+      <mat-error *ngIf="name!.errors?.['minlength']">
+        Name must be at least 3 characters long.
+      </mat-error>   
+      <mat-error *ngIf="name!.errors?.['maxlength']">
+        Name must be at least 30 characters long.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput type="text" placeholder="Alias" formControlName="alias"
+      autocomplete="Off">
+      <mat-error *ngIf="!alias?.valid && alias!.errors?.['required']">
+        Alias is required.
+      </mat-error>
+      <mat-error *ngIf="alias!.errors?.['minlength']">
+        Alias must be at least 3 characters long.
+      </mat-error>   
+      <mat-error *ngIf="alias!.errors?.['maxlength']">
+        Alias must be at least 30 characters long.
+      </mat-error>
+    </mat-form-field>
+    
+    <mat-form-field>
+      <input matInput type="text" placeholder="Short Bio" formControlName="shortBio"
+      autocomplete="Off">
+      <mat-error *ngIf="!shortBio?.valid && shortBio!.errors?.['required']">
+        Short bio is required.
+      </mat-error>
+      <mat-error *ngIf="shortBio!.errors?.['minlength']">
+        Short bio must be at least 3 characters long.
+      </mat-error>   
+      <mat-error *ngIf="shortBio!.errors?.['maxlength']">
+        Short bio must be at least 50 characters long.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <textarea matInput type="text" placeholder="Bio" formControlName="bio"
+      autocomplete="Off"></textarea>
+      <mat-error *ngIf="!bio?.valid && bio!.errors?.['required']">
+        Bio is required.
+      </mat-error>
+      <mat-error *ngIf="bio!.errors?.['minlength']">
+        Bio must be at least 3 characters long.
+      </mat-error>   
+      <mat-error *ngIf="bio!.errors?.['maxlength']">
+        Bio must be at least 200 characters long.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-dialog-actions>
+      <button type="button" mat-raised-button (click)="close()">Close</button>
+      <button mat-raised-button color="primary">Save</button>
+    </mat-dialog-actions>
+
+    <!--<button mat-raised-button color="primary">Save</button>-->
+
+  </div>
+</form>

@@ -1,0 +1,14 @@
+#spinner-container{
+  display: flex;
+  position: absolute;
+  z-index: 1001;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  justify-content: center;
+  opacity: 0.6;
+}
+
+#spinner-container mat-spinner{
+  margin:auto
+}

@@ -1,0 +1,26 @@
+version: '3.3'
+services:
+  jsonserver:
+    container_name: jsonserver
+    #restart: always
+    build:
+        context: .
+        dockerfile: Dockerfile-jsonserver.yml
+    ports:
+      - "3000:3000"
+    #volumes:
+    #  - ./server:/usr/src/app
+    networks:
+      - appnet
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx.yml
+    ports:
+      - '8081:80'
+    networks:
+      - appnet
+networks:
+  appnet:
+    driver: bridge
