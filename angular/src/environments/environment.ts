@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiHeroesUrl: "http://localhost:3000/heroes"
+  apiHeroesUrl: "http://localhost:3000/heroes",
+  mock: false
 };
 
 /*

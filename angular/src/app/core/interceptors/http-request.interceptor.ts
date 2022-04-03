@@ -8,6 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { retry, map, finalize, tap, delay} from 'rxjs/operators'
 import { SpinnerLoadingService } from '@admin/services/spinner-loading.service'
+import { environment } from 'src/environments/environment'
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
@@ -16,7 +17,8 @@ export class HttpRequestInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.spinnerLoadingService.setLoading(true);
-    return next.handle(req).pipe(delay(200))
+    let delayT = !environment.mock ? 200 : 0;
+    return next.handle(req).pipe(delay(delayT))
     .pipe(
       retry(1),
       tap({

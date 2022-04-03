@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MaterialModule } from '@shared/material.module'
 import { AdminComponent } from './admin.component';
+import { SpinnerLoaderComponent } from './components/spinner-loader/spinner-loader.component'
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe('AdminComponent', () => {
   let component: AdminComponent;
@@ -8,7 +10,8 @@ describe('AdminComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AdminComponent ]
+      imports: [ MaterialModule, RouterTestingModule ],
+      declarations: [ AdminComponent, SpinnerLoaderComponent ]
     })
     .compileComponents();
   });

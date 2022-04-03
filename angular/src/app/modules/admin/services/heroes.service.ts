@@ -15,7 +15,7 @@ export class HeroesService {
   constructor(private http: HttpClient) { }
 
   getAll(filterName:string = "", page:number = 1, limit:number = 10): Observable<HttpResponse<Hero[]>> {
-    let url = this.url + '?name_like=' + filterName + "&_page=" + page + "&_limit=" + limit
+    let url = this.url// + '?name_like=' + filterName + "&_page=" + page + "&_limit=" + limit
     return this.http.get<Hero[]>(url, { observe: 'response' })
   }
 

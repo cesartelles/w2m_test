@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HeroComponent } from '@admin/components/hero/hero.component'
 import { ConfirmDeleteComponent } from '@admin/components/confirm-delete/confirm-delete.component'
 import { MatDialogRef } from '@angular/material/dialog';
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'app-heroes-list',
@@ -30,12 +31,12 @@ export class HeroesListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllHeroes();
+    console.log("ENVIRONMENT---->", environment)
   }
 
   getAllHeroes(){
     this.heroes = []
     this.heroeService.getAll(this.nameFilter, this.currentPage + 1, this.limit).subscribe(resp => {
-      
       const keys = resp.headers.keys();
       this.total = Number(resp.headers.get("x-total-count"))
       this.heroes = resp?.body || [];

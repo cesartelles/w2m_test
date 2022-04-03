@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ConfirmDeleteComponent } from './confirm-delete.component';
+import { SharedModule } from '@shared/shared.module'
+import { MaterialModule } from '@shared/material.module'
 
 describe('ConfirmDeleteComponent', () => {
   let component: ConfirmDeleteComponent;
@@ -8,7 +10,9 @@ describe('ConfirmDeleteComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ConfirmDeleteComponent ]
+      declarations: [ ConfirmDeleteComponent ],
+      imports: [ SharedModule, MaterialModule ],
+      providers: []
     })
     .compileComponents();
   });

@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-//import {} from './../../../admin/'
 import { HeroComponent } from './hero.component';
+import { CoreModule } from '@core/core.module'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SharedModule } from '@shared/shared.module'
+import { MaterialModule } from '@shared/material.module'
 
 describe('HeroComponent', () => {
   let component: HeroComponent;
@@ -8,7 +11,8 @@ describe('HeroComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HeroComponent ]
+      declarations: [ HeroComponent ],
+      imports: [ CoreModule, BrowserAnimationsModule, SharedModule, MaterialModule ]
     })
     .compileComponents();
   });
