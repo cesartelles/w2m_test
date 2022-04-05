@@ -1,10 +1,13 @@
+<div *ngIf="state.error" class="alert alert-danger" role="alert">
+  {{ state.error }}
+</div>
 <div class="bar">
   <button mat-fab color="warn" title="Create Hero" (click)="openHeroDialog()">
     <mat-icon>add</mat-icon>
   </button>
   <div class="filter-bar">
     <mat-form-field appearance="standard">
-      <input matInput placeholder="Filter by name" (keydown)="onKeydown($event)"
+      <input id="filter_name" matInput placeholder="Filter by name" (keydown)="onKeydown($event)"
       [(ngModel)]="nameFilter">
     </mat-form-field>
     <button mat-raised-button (click)="filterByName()">Search</button>

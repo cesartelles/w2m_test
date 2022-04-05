@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Hero } from '@admin/models/hero'
+import { HeroesResponse } from '@admin/models/heroes-response'
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +12,18 @@ import { Hero } from '@admin/models/hero'
 export class HeroesService {
 
   url = environment.apiHeroesUrl;
-
   constructor(private http: HttpClient) { }
 
-  getAll(filterName:string = "", page:number = 1, limit:number = 10): Observable<HttpResponse<Hero[]>> {
-    let url = this.url// + '?name_like=' + filterName + "&_page=" + page + "&_limit=" + limit
-    return this.http.get<Hero[]>(url, { observe: 'response' })
+  getAll(filterName:string = "", page:number = 1, limit:number = 10): Observable<HeroesResponse> {
+    let url = this.url + '?name_like=' + filterName + "&_page=" + page + "&_limit=" + limit
+    return this.http.get<HeroesResponse>(url, { observe: 'response' }).pipe(
+      map(((res:any)=>{
+        let heroesResponse:HeroesResponse = new HeroesResponse();
+        heroesResponse.total = Number(res.headers.get("x-total-count"))
+        heroesResponse.heroes = res?.body || [];
+        return heroesResponse;
+      })
+    ))
   }
 
   get(id:number): Observable<any> {

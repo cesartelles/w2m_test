@@ -7,7 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { HeroComponent } from '@admin/components/hero/hero.component'
 import { ConfirmDeleteComponent } from '@admin/components/confirm-delete/confirm-delete.component'
 import { MatDialogRef } from '@angular/material/dialog';
-import { environment } from 'src/environments/environment'
+import { ErrorService } from '@core/services/error.service'
+import { HeroesResponse } from '@admin/models/heroes-response';
 
 @Component({
   selector: 'app-heroes-list',
@@ -25,23 +26,37 @@ export class HeroesListComponent implements OnInit {
   total:number = 0;
   limit:number = 5
   pageSize:number = 5;
+  state:any = { error : ""}
+  cont:number = 0;
 
   constructor(private heroeService:HeroesService, 
-              public dialog: MatDialog) { }
+              public dialog: MatDialog,
+              private errorService:ErrorService) { }
 
   ngOnInit(): void {
     this.getAllHeroes();
-    console.log("ENVIRONMENT---->", environment)
   }
 
   getAllHeroes(){
+    //console.log("GET ALL HEROES")
     this.heroes = []
-    this.heroeService.getAll(this.nameFilter, this.currentPage + 1, this.limit).subscribe(resp => {
-      const keys = resp.headers.keys();
-      this.total = Number(resp.headers.get("x-total-count"))
-      this.heroes = resp?.body || [];
-      this.dataSource.data = this.heroes;
-    });
+    this.state.error = "";
+
+    this.heroeService.getAll( this.nameFilter, 
+      this.currentPage + 1, 
+      this.limit).subscribe({
+        next: (heroesResponse:HeroesResponse) => {
+          this.total = heroesResponse.total
+          this.heroes = heroesResponse.heroes
+          this.dataSource.data = this.heroes;
+        },
+        error: (err) => {
+          console.log("Ocurrio algo->", err)
+          this.state.error = this.errorService.getErrorMessage(err);
+        },
+        complete: () => {
+        }
+      })
 
   }
 
