@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Hero } from '@admin/models/hero'
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HeroesService } from '@admin/services/heroes.service'
+import { ErrorService } from '@core/services/error.service'
 
 @Component({
   selector: 'app-hero',
@@ -11,8 +12,9 @@ import { HeroesService } from '@admin/services/heroes.service'
 })
 export class HeroComponent implements OnInit {
 
-  @Input () hero: Hero = new Hero();
+  @Input() hero: Hero = new Hero();
   @Output() onCreate = new EventEmitter<Hero>();
+  state:any = { error : ""}
 
   public heroForm = new FormGroup({
     id: new FormControl(),
@@ -23,7 +25,8 @@ export class HeroComponent implements OnInit {
   });
 
   constructor(private heroesService:HeroesService,
-              private dialogRef: MatDialogRef<HeroComponent>) { 
+              public dialogRef: MatDialogRef<HeroComponent>,
+              private errorService:ErrorService) { 
     
   }
 
@@ -37,7 +40,7 @@ export class HeroComponent implements OnInit {
   get bio() { return this.heroForm.get('bio'); }
 
   onSubmit(){
-    console.log("ON submit, valid->", this.heroForm.valid)
+
     if(this.heroForm.valid){
       if(!this.hero.id){
         this.create()
@@ -48,32 +51,39 @@ export class HeroComponent implements OnInit {
   }
 
   close(){
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
   create(){
 
+    this.state.error = "";
+
     this.heroesService.create(this.heroForm.value).subscribe({
         next: (hero:Hero) => {
-          console.log("created->", hero)
           this.onCreate.emit(hero)
-          this.dialogRef.close();
+          this.dialogRef.close(true);
         },
-        error: (e) => console.error(e),
-        complete: () => console.info('complete') 
+        error: (err) => {
+          this.state.error = this.errorService.getErrorMessage(err)
+        },
+        complete: () => {}
       }
     )
   }
 
   update(){
+
+    this.state.error = "";
+
     this.heroesService.update(this.heroForm.value).subscribe({
         next: (hero:Hero) => {
-          console.log("update->", hero)
           Object.assign(this.hero, this.heroForm.value)
           this.dialogRef.close();
         },
-        error: (e) => console.error(e),
-        complete: () => console.info('complete') 
+        error: (err) => {
+          this.state.error = this.errorService.getErrorMessage(err)
+        },
+        complete: () => {}
       }
     )
   }

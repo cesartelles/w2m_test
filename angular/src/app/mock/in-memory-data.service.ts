@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { InMemoryDbService, RequestInfo, STATUS, ResponseOptions } from 'angular-in-memory-web-api';
 import { Hero } from '@admin/models/hero'
-import { environment } from 'src/environments/environment'
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { HeroesCollection } from 'src/app/mock/heroes-mock-data'
+import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -19,93 +19,53 @@ export class InMemoryDataService implements InMemoryDbService{
 
     return this.heroes;
   }
-  
-  get(reqInfo: RequestInfo) {
-    //console.log("contador->" + this.cont + " , " + reqInfo.url + ", throwError->" + environment.throwMockError)
-    this.cont++;
-    let statusCode = 200;
-    let body:any = {};
-
-    if(true){
-      statusCode = 500;
-      body = { error : "An error has ocurred"}
-    }
-    else
-      body = this.heroes
-
-    return reqInfo.utils.createResponse$(() => {
-      console.log('HTTP GET override');
-      const options: ResponseOptions = {
-          body: body,
-          status: statusCode
-        };
-        options.headers = reqInfo.headers;
-        options.url = reqInfo.url;
-      return options;
-    });
-
-    return undefined; // let the default GET handle all others
+  searchById(id:number){
+    return this.heroes.find(hero => hero.id === id)
   }
 
-  /*get(reqInfo: RequestInfo) {
+  getIdFromUrl(url:string){
+    return url.match(/\/heroes\/(\d+)/) ? parseInt(url.split("/")[2]) : 0;
+  }
+  
+  get(reqInfo: RequestInfo){
+    let id = this.getIdFromUrl(reqInfo.url);
+    let body:any = id ? this.searchById(id) : this.heroes
+    const total = this.heroes.length.toString()
+    let headers = reqInfo.headers.append("x-total-count", total);
+    return this.getResponse(reqInfo, body, 200, headers);
+  }
+
+  post(reqInfo: RequestInfo){
+    let body = reqInfo.utils.getJsonBody(reqInfo.req);
+    body.id = this.genId(this.heroes)
+    return this.getResponse(reqInfo, body, 200);
+  }
+
+  put(reqInfo: RequestInfo){
+    let body = reqInfo.utils.getJsonBody(reqInfo.req);
+    let id = this.getIdFromUrl(reqInfo.url);
+    body.id = id;
+    return this.getResponse(reqInfo, body, 200);
+  }
+
+  delete(reqInfo: RequestInfo){
+    return this.getResponse(reqInfo, {}, 200);
+  }
+
+  getResponse(reqInfo:RequestInfo, body:any, status:number = 200, headers:any = null){
+
+    headers = !headers ? reqInfo.headers : headers
     return reqInfo.utils.createResponse$(() => {
-      console.log('HTTP GET override');
-      const options: ResponseOptions = {
-          body: { error: `'Villains' with id=t found` },
-          status: 500
-        };
-        options.headers = reqInfo.headers;
-        options.url = reqInfo.url;
-      return options;
-    });
-
-    return undefined; // let the default GET handle all others
-  }*/
-
-  /*get(requestInfo: RequestInfo) {
-    console.log("contador->" + this.cont + " , " + requestInfo.url + ", throwError->" + environment.throwMockError)
-    this.cont++;
-    //const collectionName = requestInfo.collectionName;
-    //let params = this.getParams(requestInfo.url);
-    return requestInfo.utils.createResponse$ (() => {
-      let statusCode:number = 200;
-      let body:any = {}
-      if(environment.throwMockError){
-        statusCode = 500
-        body.error = "Internal error3"
-        //console.log("El status es ->", statusCode)
-      }
-      else
-        body = this.heroes;
-      //return throwError(() => "JIJI ERRRORR");
-      //return this.getResponse(requestInfo, body, status)
-
-      //if(environment.throwMockError)
-      //console.log("Esto devuelve->", options, ", el status->", STATUS.INTERNAL_SERVER_ERROR)
-      console.log("STATUS CODE------------>", statusCode)
+      const total = this.heroes.length.toString()
       let options: ResponseOptions = {
-        body: { error: `'Villains' with id=t found` },
-        status: statusCode,
-        headers: requestInfo.headers,
-        url: requestInfo.url
+        body: body,
+        status: status,
+        url: reqInfo.url,
+        headers: headers
       };
-      environment.throwMockError = false;
       return options;
     });
-    return undefined; // let the default GET handle all others
 
-  }*/
-
-  getResponse(requestInfo:RequestInfo, body:any, status:number = 200){
-    const options: ResponseOptions = {
-      body: body,
-      status: status,
-      headers: requestInfo.headers,
-      url: requestInfo.url
-    };
-    //if(environment.throwMockError)
-    //console.log("Esto devuelve->", options, ", el status->", STATUS.INTERNAL_SERVER_ERROR)
-    return requestInfo.utils.createResponse$ (() => options);
   }
 
   genId(heroes: Hero[]): number {

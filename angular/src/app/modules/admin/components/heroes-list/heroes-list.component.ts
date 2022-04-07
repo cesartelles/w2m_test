@@ -21,14 +21,15 @@ export class HeroesListComponent implements OnInit {
   heroes:Hero[] = []
   dataSource = new MatTableDataSource<Hero>();
   nameFilter:string = "";
-  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   currentPage:number = 0;
   total:number = 0;
+  totalIni:number = 0;
   limit:number = 5
   pageSize:number = 5;
   state:any = { error : ""}
   cont:number = 0;
-
+  last:boolean = false;
   constructor(private heroeService:HeroesService, 
               public dialog: MatDialog,
               private errorService:ErrorService) { }
@@ -37,8 +38,7 @@ export class HeroesListComponent implements OnInit {
     this.getAllHeroes();
   }
 
-  getAllHeroes(){
-    //console.log("GET ALL HEROES")
+  getAllHeroes(lastPage:boolean = false){
     this.heroes = []
     this.state.error = "";
 
@@ -47,11 +47,11 @@ export class HeroesListComponent implements OnInit {
       this.limit).subscribe({
         next: (heroesResponse:HeroesResponse) => {
           this.total = heroesResponse.total
+          !this.totalIni && (this.totalIni = this.total)
           this.heroes = heroesResponse.heroes
           this.dataSource.data = this.heroes;
         },
         error: (err) => {
-          console.log("Ocurrio algo->", err)
           this.state.error = this.errorService.getErrorMessage(err);
         },
         complete: () => {
@@ -66,9 +66,15 @@ export class HeroesListComponent implements OnInit {
   }
 
   getPaginatorData($event:any){
+    console.log("Paginator lenght en DATA->", this.paginator.length)
+
     this.currentPage = $event.pageIndex
     this.getAllHeroes()
     return $event;
+  }
+
+  updateTotal(){
+
   }
 
   openHeroDialog(hero?:Hero): void {
@@ -79,9 +85,17 @@ export class HeroesListComponent implements OnInit {
       dialogRef.componentInstance.hero = hero;
     else
       dialogRef.componentInstance.onCreate.subscribe((hero:Hero)=>{        
-        this.heroes.push(hero)
-        this.total++;
-        this.dataSource._updateChangeSubscription();
+        
+        this.nameFilter = ""
+        this.totalIni++;
+        this.paginator.length = this.totalIni
+        console.log("Heroes lenght->", this.heroes.length, " , Page size->", this.pageSize)
+        if(this.heroes.length < this.pageSize ){
+          this.heroes.push(hero)
+          this.dataSource._updateChangeSubscription()
+        }
+        else
+          this.paginator.lastPage()  
       })
 
     dialogRef.afterClosed().subscribe(result => {
@@ -91,18 +105,35 @@ export class HeroesListComponent implements OnInit {
 
   openDeleteDialog(hero:Hero): void {
 
+    //this.paginator.firstPage()
+
+    console.log("Paginator open delete->", this.paginator.length)
+
     const dialogRef = this.dialog.open(ConfirmDeleteComponent, {
       width: '500px'
     });
 
     dialogRef.componentInstance.onDelete.subscribe(()=>{
-
+      
       this.heroeService.delete(hero).subscribe(resp => {
-        this.heroes.forEach((h,i) => {
-          if(this.heroes[i].id === hero?.id)
-            this.heroes.splice(i,1)
-        });
-        this.dataSource._updateChangeSubscription();
+
+        this.totalIni--;
+        this.paginator.length = this.totalIni
+
+        if(this.heroes.length == 1)
+          this.paginator.firstPage()
+        else if (this.heroes.length == this.pageSize)
+          this.getAllHeroes()
+        else{
+          
+          this.heroes.forEach((h,i) => {
+            if(this.heroes[i].id === hero?.id)
+              this.heroes.splice(i,1)
+          });
+
+          this.dataSource._updateChangeSubscription();
+        }
+            
       });
 
     })

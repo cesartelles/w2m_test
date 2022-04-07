@@ -10,7 +10,7 @@
       <input id="filter_name" matInput placeholder="Filter by name" (keydown)="onKeydown($event)"
       [(ngModel)]="nameFilter">
     </mat-form-field>
-    <button mat-raised-button (click)="filterByName()">Search</button>
+    <button id="searchBtn" mat-raised-button (click)="filterByName()">Search</button>
   </div>
 </div>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" >
@@ -39,10 +39,12 @@
       <th mat-header-cell *matHeaderCellDef> Action </th>
       <td mat-cell *matCellDef="let hero" class="action-link">
         <a> 
-          <mat-icon aria-hidden="false" (click)="openHeroDialog(hero)">edit</mat-icon>
+          <mat-icon aria-hidden="false" class="edit-button" 
+          (click)="openHeroDialog(hero)">edit</mat-icon>
         </a> | 
         <a>
-          <mat-icon aria-hidden="false" (click)="openDeleteDialog(hero)">delete</mat-icon>
+          <mat-icon aria-hidden="false" class="del-button"
+          (click)="openDeleteDialog(hero)">delete</mat-icon>
         </a>  
       </td>
     </ng-container>
@@ -50,5 +52,5 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
   <mat-paginator (page)="getPaginatorData($event)" [length]="total" 
-  [pageSize]="pageSize" showFirstLastButtons>
+  [pageSize]="pageSize" [pageIndex]="currentPage" showFirstLastButtons>
   </mat-paginator>

@@ -1,5 +1,7 @@
 
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Output, EventEmitter } from '@angular/core';
+import { NgControl } from "@angular/forms";
+
 @Directive({
   selector: '[uppercase]',
   host: {
@@ -9,21 +11,12 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 export class UppercaseInputDirective {
 
   lastValue: string = "";
+  @Output() ngModelChange: EventEmitter<any> = new EventEmitter();
 
-  constructor(public ref: ElementRef) { }
+  constructor(public ref: ElementRef, private control : NgControl) { }
 
   @HostListener('input', ['$event']) onInput($event:any) 
   {
-    var start = $event.target.selectionStart;
-    var end = $event.target.selectionEnd;
-    $event.target.value = $event.target.value.toUpperCase();
-    $event.target.setSelectionRange(start, end);
-    $event.preventDefault();
-
-    if (!this.lastValue || (this.lastValue && $event.target.value.length > 0 && this.lastValue !== $event.target.value)) {
-      this.lastValue = this.ref.nativeElement.value = $event.target.value;
-      // Propagation
-      const evt = document.createEvent('HTMLEvents');
-    }
+    this.control.control!.setValue($event.target.value.toUpperCase())
   }
 }
