@@ -2,6 +2,8 @@
 <mat-divider></mat-divider>
 <p>Are you sure delete this item?</p>
 <mat-dialog-actions>
-  <button type="button" mat-raised-button (click)="cancel()">Close</button>
-  <button mat-raised-button color="primary" (click)="delete()">Delete</button>
+  <button id="saveBtn" type="button" mat-raised-button (click)="cancel()">
+    Close</button>
+  <button id="delBtn" mat-raised-button color="primary" (click)="delete()">
+    Delete</button>
 </mat-dialog-actions>

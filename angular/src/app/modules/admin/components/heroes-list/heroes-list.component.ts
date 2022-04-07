@@ -6,7 +6,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { HeroComponent } from '@admin/components/hero/hero.component'
 import { ConfirmDeleteComponent } from '@admin/components/confirm-delete/confirm-delete.component'
-import { MatDialogRef } from '@angular/material/dialog';
 import { ErrorService } from '@core/services/error.service'
 import { HeroesResponse } from '@admin/models/heroes-response';
 
@@ -51,11 +50,8 @@ export class HeroesListComponent implements OnInit {
           this.heroes = heroesResponse.heroes
           this.dataSource.data = this.heroes;
         },
-        error: (err) => {
-          this.state.error = this.errorService.getErrorMessage(err);
-        },
-        complete: () => {
-        }
+        error: (err) => this.state.error = this.errorService.getErrorMessage(err),
+        complete: () => {}
       })
 
   }
@@ -66,8 +62,6 @@ export class HeroesListComponent implements OnInit {
   }
 
   getPaginatorData($event:any){
-    console.log("Paginator lenght en DATA->", this.paginator.length)
-
     this.currentPage = $event.pageIndex
     this.getAllHeroes()
     return $event;
@@ -89,7 +83,6 @@ export class HeroesListComponent implements OnInit {
         this.nameFilter = ""
         this.totalIni++;
         this.paginator.length = this.totalIni
-        console.log("Heroes lenght->", this.heroes.length, " , Page size->", this.pageSize)
         if(this.heroes.length < this.pageSize ){
           this.heroes.push(hero)
           this.dataSource._updateChangeSubscription()
@@ -98,50 +91,46 @@ export class HeroesListComponent implements OnInit {
           this.paginator.lastPage()  
       })
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
   }
 
   openDeleteDialog(hero:Hero): void {
-
-    //this.paginator.firstPage()
-
-    console.log("Paginator open delete->", this.paginator.length)
 
     const dialogRef = this.dialog.open(ConfirmDeleteComponent, {
       width: '500px'
     });
 
     dialogRef.componentInstance.onDelete.subscribe(()=>{
-      
-      this.heroeService.delete(hero).subscribe(resp => {
-
-        this.totalIni--;
-        this.paginator.length = this.totalIni
-
-        if(this.heroes.length == 1)
-          this.paginator.firstPage()
-        else if (this.heroes.length == this.pageSize)
-          this.getAllHeroes()
-        else{
-          
-          this.heroes.forEach((h,i) => {
-            if(this.heroes[i].id === hero?.id)
-              this.heroes.splice(i,1)
-          });
-
-          this.dataSource._updateChangeSubscription();
-        }
-            
-      });
-
+      this.heroeService.delete(hero).subscribe(resp => this.handleDeleteEvent(hero));
     })
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      //this.animal = result;
-    });
+  }
+
+  handleDeleteEvent(hero:Hero){
+    this.totalIni--;
+    this.paginator.length = this.totalIni
+    
+    if(this.heroes.length === 1)
+    {
+      this.nameFilter = "";
+
+      if(this.paginator.hasPreviousPage()){
+        this.paginator.firstPage()
+      }
+      else
+        this.getAllHeroes()
+      
+    }
+    else if (this.heroes.length == this.pageSize)
+      this.getAllHeroes()
+    
+    else{
+      this.heroes.forEach((h,i) => {
+        if(this.heroes[i].id === hero?.id)
+          this.heroes.splice(i,1)
+      });
+
+      this.dataSource._updateChangeSubscription();
+    }
   }
 
   onKeydown(event:any) {
