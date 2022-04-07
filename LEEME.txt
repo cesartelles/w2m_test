@@ -1,4 +1,4 @@
-Para contruir la app :
+- Para contruir la app :
 
 docker-compose build
 docker-compose up
@@ -6,3 +6,11 @@ docker-compose up
 Para acceder 
 
 http://localhost:8081
+
+- Para ejecutar tests:
+
+npm test
+
+- Para ver la cobertura:
+
+npm run coverage

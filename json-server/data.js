@@ -2,9 +2,9 @@
 module.exports = () => {
   const data = { heroes: [] }
 
-  data.heroes.push({ id: 1, name: "Bruce Wayne", alias: "BATMAN", shortBio: "Es un heroe disfrazado de murcielago", bio:"Long bio" })
-  data.heroes.push({ id: 2, name: "Clarck kent", alias: "SUPERMAN", shortBio: "El super heroe mas poderoso", bio:"Long bio" })
-  data.heroes.push({ id: 3, name: "Peter Parker", alias: "SPIDERMAN", shortBio: "El hombre araña", bio:"Long bio" })
+  data.heroes.push({ id: 1, name: "BRUCE WAYNE", alias: "Batman", shortBio: "Es un heroe disfrazado de murcielago", bio:"Long bio" })
+  data.heroes.push({ id: 2, name: "CLARCK KENT", alias: "Superman", shortBio: "El super heroe mas poderoso", bio:"Long bio" })
+  data.heroes.push({ id: 3, name: "PETER PARKER", alias: "Spiderman", shortBio: "El hombre araña", bio:"Long bio" })
 
 
   // Create 1000 users
